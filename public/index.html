@@ -1,0 +1,66 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>JS Practice</title>
+
+		<link rel="stylesheet" href="main.css">
+	</head>
+
+	<body>
+		<h1>Superhero Searchifier</h1>
+		Enter a search term:
+		<input type='text' id='term'/>
+		<br />
+		<button id='search' onclick='search()'>Search</button>
+		<div id='results'>
+
+		</div>
+		<script>
+			function search(){
+				// term contains the user search input
+				let term = document.getElementById('term').value;
+				//trying to figure out error
+				console.log('Search term:', term);
+				let resultsDiv = document.getElementById('results');
+				// TODO: send request to the server using "fetch" function
+				// It will return a Promise object 
+				// Show the results returned from serve as a table
+				fetch(`http://localhost:3000/search/${term}`)
+					.then(response => {
+						if (!response.ok){
+							throw new Error('Network response not working: '+ response.statusText);
+						}
+						return response.json();
+					})
+					.then(data => {
+						// debuggiing
+						console.log(data);
+						// clear previous data
+						resultsDiv.innerHTML = '';
+						// check for results
+						if (data.length === 0){
+							resultsDiv.innerHTML = 'No heroes were found.';
+						}
+						else{
+							// create table to display results
+							let table = '<table><tr><th>Name</th></tr>';
+                    		data.forEach(hero => {
+                        		table += `<tr><td>${hero.Name}</td></tdr>`;
+							});
+							table += '</table>';
+							resultsDiv.innerHTML = table;
+						}
+					})
+					//debugging
+					.catch(error => {
+						console.error('Error:', error);
+						resultsDiv.innerHTML = 'Error occured when fetching data.'
+					});
+			}
+		</script>
+	</body>
+</html>
